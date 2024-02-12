@@ -1,0 +1,16 @@
+{% extends "layout.html" %} {% block content %}
+
+<div class="row">
+  <div class="col-md-12 text-center">
+    <h1>
+      Data Engineering solution to identify the impact of different variables on
+      COVID-19 outcomes
+    </h1>
+    {% if login %}
+    <h3>Let's get started.</h3>
+    {% else %}
+    <p>Already registered? <a href="{{ url_for('index') }}">Login</a></p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

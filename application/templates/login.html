@@ -1,0 +1,33 @@
+{% extends "layout.html" %} {% block content %}
+
+<div class="row">
+  <h1>Login</h1>
+  <div class="col-md-6 offset-md-3">
+    <form
+      name="dataupload"
+      action="/upload"
+      method="POST"
+      id="form1"
+      enctype="multipart/form-data"
+    >
+      <label for="filenameX">Select Dependent Data</label>
+      <input
+        type="file"
+        class="variablesdata"
+        name="filenameX"
+        id="filenameX"
+      />
+      <!-- <input type="submit" /> -->
+
+      <label for="filenameY">Select Independent Data</label>
+      <input
+        type="file"
+        class="variablesdata"
+        name="filenameY"
+        id="filenameY"
+      /><br />
+      <input type="submit" value="Upload" />
+    </form>
+  </div>
+</div>
+{% endblock %}

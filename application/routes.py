@@ -1,13 +1,15 @@
 from application import app
-from flask import render_template
+from flask import render_template, request
 import pyodbc 
 import pandas as pd
+import os
 import warnings
+import csv
 warnings.filterwarnings("ignore")
 
 conn = pyodbc.connect("Driver={SQL Server Native Client 11.0};"
                       "Server=DESKTOP-0F1D2L8;"
-                      "Database=covidDB;"
+                      "Database=Major Project;"
                       "Trusted_Connection=yes;")
 
 @app.route("/")
@@ -28,6 +30,90 @@ def register():
 @app.route("/login")
 def login():
     return render_template("login.html", login=True)
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if request.method == 'POST':
+        # Get the uploaded files
+        file_x = request.files['file_x']
+        file_y = request.files['file_y']
+
+        # Save the uploaded files
+        file_x_path = os.path.join('uploads', file_x.filename)
+        file_y_path = os.path.join('uploads', file_y.filename)
+        file_x.save(file_x_path)
+        file_y.save(file_y_path)
+
+
+ # Open the CSV files and read data
+ # Open the CSV files and read data
+    with open(file_x_path) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        column_names = next(csv_reader)
+        print(column_names)
+
+        # Construct the SQL query to create the table
+        cleaned_column_names = [col.strip().strip('"ï»¿') for col in column_names]
+        create_table_query = f"CREATE TABLE tablex (id INT IDENTITY(1,1) PRIMARY KEY,{', '.join([f'{col.strip()} VARCHAR(20)' for col in cleaned_column_names])})"
+
+        print("SQL Query:", create_table_query)  # Debugging statement
+
+        # Establish a connection to the SQL Server
+
+
+        # Create a cursor to execute SQL queries
+        cursor = conn.cursor()
+
+        # Execute the SQL query to create the table
+        cursor.execute(create_table_query)
+
+        for row in csv_reader:
+            # Construct the INSERT INTO query
+            insert_query = f"""
+            INSERT INTO tablex ({', '.join(cleaned_column_names)})
+            VALUES ({', '.join([f"'{val.strip()}'" for val in row])})
+            """
+            # Execute the INSERT INTO query
+            cursor.execute(insert_query)
+
+
+    with open(file_y_path) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        column_names = next(csv_reader)
+        print(column_names)
+
+        # Construct the SQL query to create the table
+        cleaned_column_names = [col.strip().strip('"ï»¿') for col in column_names]
+        create_table_query = f"CREATE TABLE tabley (id INT IDENTITY(1,1) PRIMARY KEY,{', '.join([f'{col.strip()} VARCHAR(20)' for col in cleaned_column_names])})"
+
+        print("SQL Query:", create_table_query)  # Debugging statement
+
+        # Establish a connection to the SQL Server
+
+
+        # Create a cursor to execute SQL queries
+        cursor = conn.cursor()
+
+        # Execute the SQL query to create the table
+        cursor.execute(create_table_query)
+
+        for row in csv_reader:
+            # Construct the INSERT INTO query
+            insert_query = f"""
+            INSERT INTO tabley ({', '.join(cleaned_column_names)})
+            VALUES ({', '.join([f"'{val.strip()}'" for val in row])})
+            """
+            # Execute the INSERT INTO query
+            cursor.execute(insert_query)
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return 'Files uploaded and data inserted into the database successfully.'
+
+# if __name__ == '__main__':
+#   app.run(debug=True)
 
 
 

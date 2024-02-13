@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Page</title>
+  </head>
+  <body>
+    <h1>Data from Table X</h1>
+    <table border="1">
+      <tr>
+        {% for column in columns_x %}
+        <th>{{ column }}</th>
+        {% endfor %}
+      </tr>
+      {% for row in data_x %}
+      <tr>
+        {% for value in row %}
+        <td>{{ value }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+
+    <h1>Data from Table Y</h1>
+    <table border="1">
+      <tr>
+        {% for column in columns_y %}
+        <th>{{ column }}</th>
+        {% endfor %}
+      </tr>
+      {% for row in data_y %}
+      <tr>
+        {% for value in row %}
+        <td>{{ value }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>

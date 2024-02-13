@@ -31,6 +31,10 @@ def register():
 def login():
     return render_template("login.html", login=True)
 
+# @app.route("/login")
+# def login():
+#     return render_template("login.html", login=True)
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if request.method == 'POST':
@@ -86,12 +90,7 @@ def upload_file():
         cleaned_column_names = [col.strip().strip('"ï»¿') for col in column_names]
         create_table_query = f"CREATE TABLE tabley (id INT IDENTITY(1,1) PRIMARY KEY,{', '.join([f'{col.strip()} VARCHAR(20)' for col in cleaned_column_names])})"
 
-        print("SQL Query:", create_table_query)  # Debugging statement
-
-        # Establish a connection to the SQL Server
-
-
-        # Create a cursor to execute SQL queries
+        # print("SQL Query:", create_table_query) 
         cursor = conn.cursor()
 
         # Execute the SQL query to create the table
@@ -106,11 +105,24 @@ def upload_file():
             # Execute the INSERT INTO query
             cursor.execute(insert_query)
 
+    
+
+    cursor.execute("SELECT * FROM tablex")
+    columns_x = [column[0] for column in cursor.description]
+    data_x = cursor.fetchall()
+
+    # Fetch data from tabley
+    cursor.execute("SELECT * FROM tabley")
+    columns_y = [column[0] for column in cursor.description]
+    data_y = cursor.fetchall()
+
+    # Render the template and pass the data to it
+    
     conn.commit()
     cursor.close()
     conn.close()
-
-    return 'Files uploaded and data inserted into the database successfully.'
+    return render_template('viewdata.html', columns_x=columns_x, data_x=data_x, columns_y=columns_y, data_y=data_y)
+    # return 'Files uploaded and data inserted into the database successfully.'
 
 # if __name__ == '__main__':
 #   app.run(debug=True)
